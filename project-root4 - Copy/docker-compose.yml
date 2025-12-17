@@ -1,0 +1,192 @@
+version: '3.8'
+
+services:
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      SERVICE_NAME: api-gateway
+      STORAGE_ROOT: /app/storage
+      S3_ENABLED: ${S3_ENABLED:-0}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+    depends_on:
+      - chat-service
+      - document-service
+      - tts-service
+      - stt-service
+      - quiz-service
+    volumes:
+      - api_gateway_data:/app/storage
+    networks:
+      - microservices-network
+    restart: unless-stopped
+    read_only: true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+  chat-service:
+    build:
+      context: ./chat-service
+    container_name: chat-service
+    ports:
+      - "8003:8003"
+    env_file:
+      - .env
+    environment:
+      SERVICE_NAME: chat-service
+      STORAGE_ROOT: /app/storage
+      S3_ENABLED: ${S3_ENABLED:-1}
+      S3_BUCKET: ${CHAT_BUCKET:-cse363-chat-service-storage}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      AI_MODEL: gpt-4o-mini
+    volumes:
+      - chat_data:/app/storage
+    networks:
+      - microservices-network
+    restart: unless-stopped
+    read_only: true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  document-service:
+    build:
+      context: ./document-service
+    container_name: document-service
+    ports:
+      - "8004:8004"
+    env_file:
+      - .env
+    environment:
+      SERVICE_NAME: document-service
+      STORAGE_ROOT: /app/storage
+      S3_ENABLED: ${S3_ENABLED:-1}
+      S3_BUCKET: ${DOCUMENT_BUCKET:-cse363-docreader-service-storage}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+    volumes:
+      - document_data:/app/storage
+    networks:
+      - microservices-network
+    restart: unless-stopped
+    read_only: true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8004/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  tts-service:
+    build:
+      context: ./tts-service
+    container_name: tts-service
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+    environment:
+      SERVICE_NAME: tts-service
+      STORAGE_ROOT: /app/storage
+      S3_ENABLED: ${S3_ENABLED:-1}
+      S3_BUCKET: ${TTS_BUCKET:-cse363-tts-service-storage}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+    volumes:
+      - tts_data:/app/storage
+    networks:
+      - microservices-network
+    restart: unless-stopped
+    read_only: true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  stt-service:
+    build:
+      context: ./stt-service
+    container_name: stt-service
+    ports:
+      - "8002:8002"
+    env_file:
+      - .env
+    environment:
+      SERVICE_NAME: stt-service
+      STORAGE_ROOT: /app/storage
+      S3_ENABLED: ${S3_ENABLED:-1}
+      S3_BUCKET: ${STT_BUCKET:-cse363-stt-service-storage}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+    volumes:
+      - stt_data:/app/storage
+    networks:
+      - microservices-network
+    restart: unless-stopped
+    read_only: true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  quiz-service:
+    build:
+      context: ./quiz-service
+    container_name: quiz-service
+    ports:
+      - "8005:8005"
+    env_file:
+      - .env
+    environment:
+      SERVICE_NAME: quiz-service
+      STORAGE_ROOT: /app/storage
+      S3_ENABLED: ${S3_ENABLED:-1}
+      S3_BUCKET: ${QUIZ_BUCKET:-cse363-quiz-service-storage}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+    volumes:
+      - quiz_data:/app/storage
+    networks:
+      - microservices-network
+    restart: unless-stopped
+    read_only: true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  api_gateway_data:
+  chat_data:
+  document_data:
+  tts_data:
+  stt_data:
+  quiz_data:
+
+networks:
+  microservices-network:
+    driver: bridge
