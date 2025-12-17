@@ -1,0 +1,6 @@
+services:
+  api-gateway:
+    ports:
+      - "8080:8080"
+    env_file:
+      - ../env/dev.env
