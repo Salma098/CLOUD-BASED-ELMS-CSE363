@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  api-gateway:
+    build: ./api-gateway
+    depends_on:
+      - chat-service
+      - quiz-service
+      - document-service
+      - stt-service
+      - tts-service
+
+  chat-service:
+    build: ./chat-service
+
+  quiz-service:
+    build: ./quiz-service
+
+  document-service:
+    build: ./document-service
+
+  stt-service:
+    build: ./stt-service
+
+  tts-service:
+    build: ./tts-service
+
+  frontend:
+    build: ./frontend
