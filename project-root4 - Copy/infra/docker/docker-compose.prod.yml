@@ -1,6 +1,0 @@
-services:
-  api-gateway:
-    ports:
-      - "80:8080"
-    env_file:
-      - ../env/prod.env
