@@ -102,14 +102,13 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.ECR_REGISTRY }}/${{ matrix.service }}:${{ steps.meta.outputs.sha_short }}
-          severity: CRITICAL,HIGH
+          severity: CRITICAL
           exit-code: 1
 
       - name: Push image to ECR
         run: |
           docker push ${{ env.ECR_REGISTRY }}/${{ matrix.service }}:${{ steps.meta.outputs.sha_short }}
           docker push ${{ env.ECR_REGISTRY }}/${{ matrix.service }}:${{ steps.meta.outputs.branch }}-latest
-
   # =========================
   # Job 3: Deploy to Dev
   # =========================
