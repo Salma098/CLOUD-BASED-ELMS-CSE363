@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Enhanced Learning Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+        }
+
+        .login-container {
+            max-width: 500px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .login-container h2 {
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .role-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .role-card {
+            background: #f8f9fa;
+            padding: 40px 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            background: #e9ecef;
+        }
+
+        .role-card i {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            background: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        .service-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .service-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-box {
+            background: #f0f7ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-box h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .chat-messages {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .message.user {
+            background: #667eea;
+            color: white;
+            margin-left: 20%;
+        }
+
+        .message.assistant {
+            background: white;
+            margin-right: 20%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .file-upload {
+            border: 2px dashed #667eea;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            background: #f0f7ff;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .quiz-question {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .quiz-option {
+            padding: 10px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            background: #e9ecef;
+        }
+
+        .quiz-option input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #28a745;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #dc3545;
+        }
+
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+        }
+
+        .course-detail {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <!-- Login Role Selection -->
+        <div id="roleSelection" style="display: block;">
+            <div class="login-container">
+                <h2>🎓 Welcome to AI-Enhanced LMS</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 20px;">Please select your role to continue</p>
+                <div class="role-selection">
+                    <div class="role-card" onclick="selectRole('student')">
+                        <div style="font-size: 48px;">👨‍🎓</div>
+                        <h3>Student</h3>
+                        <p style="color: #666; margin-top: 10px;">Access courses and learning materials</p>
+                    </div>
+                    <div class="role-card" onclick="selectRole('teacher')">
+                        <div style="font-size: 48px;">👨‍🏫</div>
+                        <h3>Teacher</h3>
+                        <p style="color: #666; margin-top: 10px;">Manage courses and create content</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginForm" style="display: none;">
+            <div class="login-container">
+                <h2 id="loginTitle">Login</h2>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="username" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Enter password">
+                </div>
+                <div class="error" id="loginError" style="display: none; margin-bottom: 15px;"></div>
+                <button class="btn" onclick="login()" style="width: 100%; margin-bottom: 10px;">Login</button>
+                <button class="back-btn" onclick="backToRoleSelection()" style="width: 100%;">Back</button>
+            </div>
+        </div>
+
+        <!-- Student Dashboard -->
+        <div id="studentDashboard" style="display: none;">
+            <div class="header">
+                <div>
+                    <h1>🎓 Student Dashboard</h1>
+                    <p>Welcome back, Student!</p>
+                </div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="showStudentTab('courses')">📚 My Courses</button>
+                <button class="tab" onclick="showStudentTab('ai')">🤖 AI Tools</button>
+            </div>
+
+            <!-- Student Courses -->
+            <div id="studentCourses" class="content active">
+                <div class="service-card">
+                    <h3>My Courses</h3>
+                    <div class="grid">
+                        <div class="card" onclick="viewCourse(1, 'student')">
+                            <h4>📘 Introduction to Programming</h4>
+                            <p style="color: #666; margin: 10px 0;">Learn the basics of programming with Python</p>
+                            <p><strong>Instructor:</strong> Dr. Smith</p>
+                            <p><strong>Progress:</strong> 65%</p>
+                        </div>
+                        <div class="card" onclick="viewCourse(2, 'student')">
+                            <h4>📗 Data Structures & Algorithms</h4>
+                            <p style="color: #666; margin: 10px 0;">Master fundamental data structures</p>
+                            <p><strong>Instructor:</strong> Prof. Johnson</p>
+                            <p><strong>Progress:</strong> 45%</p>
+                        </div>
+                        <div class="card" onclick="viewCourse(3, 'student')">
+                            <h4>📙 Web Development</h4>
+                            <p style="color: #666; margin: 10px 0;">Build modern web applications</p>
+                            <p><strong>Instructor:</strong> Dr. Williams</p>
+                            <p><strong>Progress:</strong> 80%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student AI Tools -->
+            <div id="studentAI" class="content">
+                <div id="aiMicroservices"></div>
+            </div>
+        </div>
+
+        <!-- Teacher Dashboard -->
+        <div id="teacherDashboard" style="display: none;">
+            <div class="header">
+                <div>
+                    <h1>🎓 Teacher Dashboard</h1>
+                    <p>Welcome back, Teacher!</p>
+                </div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="showTeacherTab('courses')">📚 My Courses</button>
+                <button class="tab" onclick="showTeacherTab('ai')">🤖 AI Tools</button>
+            </div>
+
+            <!-- Teacher Courses -->
+            <div id="teacherCourses" class="content active">
+                <div class="service-card">
+                    <h3>My Courses</h3>
+                    <div class="grid">
+                        <div class="card" onclick="viewCourse(1, 'teacher')">
+                            <h4>📘 Introduction to Programming</h4>
+                            <p style="color: #666; margin: 10px 0;">Learn the basics of programming with Python</p>
+                            <p><strong>Students:</strong> 45</p>
+                        </div>
+                        <div class="card" onclick="viewCourse(2, 'teacher')">
+                            <h4>📗 Data Structures & Algorithms</h4>
+                            <p style="color: #666; margin: 10px 0;">Master fundamental data structures</p>
+                            <p><strong>Students:</strong> 38</p>
+                        </div>
+                        <div class="card" onclick="viewCourse(3, 'teacher')">
+                            <h4>📙 Web Development</h4>
+                            <p style="color: #666; margin: 10px 0;">Build modern web applications</p>
+                            <p><strong>Students:</strong> 52</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Teacher AI Tools -->
+            <div id="teacherAI" class="content">
+                <div id="aiMicroservicesTeacher"></div>
+            </div>
+        </div>
+
+        <!-- Course Detail View -->
+        <div id="courseDetail" style="display: none;">
+            <div class="header">
+                <div>
+                    <h1 id="courseTitle">Course Title</h1>
+                    <p id="courseDescription">Course Description</p>
+                </div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+            <button class="back-btn" onclick="backToDashboard()">← Back to Dashboard</button>
+            <div id="courseContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        let currentUser = null;
+        let currentRole = null;
+        let currentConversationId = null;
+        let currentQuizId = null;
+
+        const courses = {
+            1: {
+                name: 'Introduction to Programming',
+                description: 'Learn the basics of programming with Python',
+                content: 'Week 1: Introduction to Python\nWeek 2: Variables and Data Types\nWeek 3: Control Structures\nWeek 4: Functions and Modules',
+                assignments: [
+                    { id: 1, title: 'Hello World Program', dueDate: '2024-01-15', status: 'Submitted' },
+                    { id: 2, title: 'Calculator App', dueDate: '2024-01-22', status: 'Pending' }
+                ],
+                quizzes: [
+                    { id: 1, title: 'Python Basics Quiz', questions: 10, status: 'Completed', score: '85%' },
+                    { id: 2, title: 'Functions Quiz', questions: 15, status: 'Not Started' }
+                ]
+            },
+            2: {
+                name: 'Data Structures & Algorithms',
+                description: 'Master fundamental data structures',
+                content: 'Week 1: Arrays and Lists\nWeek 2: Stacks and Queues\nWeek 3: Trees and Graphs\nWeek 4: Sorting Algorithms',
+                assignments: [
+                    { id: 1, title: 'Implement Stack', dueDate: '2024-01-18', status: 'Submitted' },
+                    { id: 2, title: 'Binary Tree Operations', dueDate: '2024-01-25', status: 'In Progress' }
+                ],
+                quizzes: [
+                    { id: 1, title: 'Data Structures Quiz', questions: 12, status: 'Completed', score: '90%' }
+                ]
+            },
+            3: {
+                name: 'Web Development',
+                description: 'Build modern web applications',
+                content: 'Week 1: HTML & CSS Basics\nWeek 2: JavaScript Fundamentals\nWeek 3: React.js Introduction\nWeek 4: Building Full Stack Apps',
+                assignments: [
+                    { id: 1, title: 'Portfolio Website', dueDate: '2024-01-20', status: 'Submitted' },
+                    { id: 2, title: 'Todo App with React', dueDate: '2024-01-27', status: 'Not Started' }
+                ],
+                quizzes: [
+                    { id: 1, title: 'HTML/CSS Quiz', questions: 20, status: 'Completed', score: '95%' },
+                    { id: 2, title: 'JavaScript Quiz', questions: 18, status: 'Completed', score: '88%' }
+                ]
+            }
+        };
+
+        function selectRole(role) {
+            currentRole = role;
+            document.getElementById('roleSelection').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('loginTitle').textContent = `Login as ${role.charAt(0).toUpperCase() + role.slice(1)}`;
+        }
+
+        function backToRoleSelection() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('roleSelection').style.display = 'block';
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
+
+            if (currentRole === 'student' && username === 'student' && password === '1234') {
+                currentUser = 'student';
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('studentDashboard').style.display = 'block';
+                loadAIMicroservices('student');
+            } else if (currentRole === 'teacher' && username === 'teacher' && password === '1234') {
+                currentUser = 'teacher';
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('teacherDashboard').style.display = 'block';
+                loadAIMicroservices('teacher');
+            } else {
+                errorDiv.textContent = 'Invalid username or password';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            currentRole = null;
+            document.getElementById('studentDashboard').style.display = 'none';
+            document.getElementById('teacherDashboard').style.display = 'none';
+            document.getElementById('courseDetail').style.display = 'none';
+            document.getElementById('roleSelection').style.display = 'block';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        function showStudentTab(tab) {
+            document.querySelectorAll('#studentDashboard .tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('#studentDashboard .content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            if (tab === 'courses') {
+                document.getElementById('studentCourses').classList.add('active');
+            } else {
+                document.getElementById('studentAI').classList.add('active');
+            }
+        }
+
+        function showTeacherTab(tab) {
+            document.querySelectorAll('#teacherDashboard .tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('#teacherDashboard .content').forEach(c => c.classList.remove('active'));
+    
+            event.target.classList.add('active');
+            if (tab === 'courses') {
+              document.getElementById('teacherCourses').classList.add('active');
+             } else {
+              document.getElementById('teacherAI').classList.add('active');
+        // Load AI microservices for teacher if not already loaded
+              setTimeout(() => {
+              const container = document.getElementById('aiMicroservicesTeacher');
+              if (container && container.innerHTML.trim() === '') {
+                loadAIMicroservices('teacher');
+               }
+            }, 100);
+          }
+        }
+        function viewCourse(courseId, role) {
+            const course = courses[courseId];
+            document.getElementById(role + 'Dashboard').style.display = 'none';
+            document.getElementById('courseDetail').style.display = 'block';
+            document.getElementById('courseTitle').textContent = course.name;
+            document.getElementById('courseDescription').textContent = course.description;
+
+            let contentHTML = '';
+            
+            if (role === 'student') {
+                contentHTML = `
+                    <div class="tabs">
+                        <button class="tab active" onclick="showCourseTab('content')">📖 Content</button>
+                        <button class="tab" onclick="showCourseTab('assignments')">📝 Assignments</button>
+                        <button class="tab" onclick="showCourseTab('quizzes')">✏️ Quizzes</button>
+                    </div>
+
+                    <div id="courseContentTab" class="content active">
+                        <div class="service-card">
+                            <h3>Course Content</h3>
+                            <pre style="white-space: pre-wrap; font-family: inherit;">${course.content}</pre>
+                        </div>
+                    </div>
+
+                    <div id="courseAssignments" class="content">
+                        <div class="service-card">
+                            <h3>Assignments</h3>
+                            ${course.assignments.map(a => `
+                                <div class="card" style="margin-bottom: 15px;">
+                                    <h4>${a.title}</h4>
+                                    <p><strong>Due Date:</strong> ${a.dueDate}</p>
+                                    <p><strong>Status:</strong> <span style="color: ${a.status === 'Submitted' ? '#28a745' : '#ffc107'}">${a.status}</span></p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div id="courseQuizzes" class="content">
+                        <div class="service-card">
+                            <h3>Quizzes</h3>
+                            ${course.quizzes.map(q => `
+                                <div class="card" style="margin-bottom: 15px;">
+                                    <h4>${q.title}</h4>
+                                    <p><strong>Questions:</strong> ${q.questions}</p>
+                                    <p><strong>Status:</strong> ${q.status}</p>
+                                    ${q.score ? `<p><strong>Score:</strong> ${q.score}</p>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else {
+                contentHTML = `
+                    <div class="tabs">
+                        <button class="tab active" onclick="showCourseTab('upload')">📤 Upload Files</button>
+                        <button class="tab" onclick="showCourseTab('createAssignment')">📝 Create Assignment</button>
+                        <button class="tab" onclick="showCourseTab('createQuiz')">✏️ Create Quiz</button>
+                    </div>
+
+                    <div id="uploadFiles" class="content active">
+                        <div class="service-card">
+                            <h3>Upload Course Materials</h3>
+                            <div class="file-upload" onclick="document.getElementById('courseFileUpload').click()">
+                                <input type="file" id="courseFileUpload" multiple>
+                                <p>📄 Click to upload files</p>
+                                <p style="color: #666; font-size: 14px;">Supports PDF, DOCX, PPT, and more</p>
+                            </div>
+                            <div id="uploadResult"></div>
+                        </div>
+                    </div>
+
+                    <div id="createAssignment" class="content">
+                        <div class="service-card">
+                            <h3>Create New Assignment</h3>
+                            <div class="form-group">
+                                <label>Assignment Title</label>
+                                <input type="text" id="assignmentTitle" placeholder="Enter assignment title">
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea id="assignmentDesc" placeholder="Enter assignment description"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Due Date</label>
+                                <input type="date" id="assignmentDue">
+                            </div>
+                            <button class="btn" onclick="submitAssignment()">Create Assignment</button>
+                            <div id="assignmentResult"></div>
+                        </div>
+                    </div>
+
+                    <div id="createQuiz" class="content">
+                        <div class="service-card">
+                            <h3>Create New Quiz</h3>
+                            <div class="form-group">
+                                <label>Quiz Title</label>
+                                <input type="text" id="quizTitle" placeholder="Enter quiz title">
+                            </div>
+                            <div class="form-group">
+                                <label>Number of Questions</label>
+                                <input type="number" id="quizQuestions" value="10" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Time Limit (minutes)</label>
+                                <input type="number" id="quizTime" value="30" min="5">
+                            </div>
+                            <button class="btn" onclick="submitQuiz()">Create Quiz</button>
+                            <div id="quizCreateResult"></div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('courseContent').innerHTML = contentHTML;
+        }
+
+        function showCourseTab(tab) {
+            document.querySelectorAll('#courseDetail .tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('#courseDetail .content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            
+            if (tab === 'content') document.getElementById('courseContentTab').classList.add('active');
+            else if (tab === 'assignments') document.getElementById('courseAssignments').classList.add('active');
+            else if (tab === 'quizzes') document.getElementById('courseQuizzes').classList.add('active');
+            else if (tab === 'upload') document.getElementById('uploadFiles').classList.add('active');
+            else if (tab === 'createAssignment') document.getElementById('createAssignment').classList.add('active');
+            else if (tab === 'createQuiz') document.getElementById('createQuiz').classList.add('active');
+        }
+
+        function backToDashboard() {
+            document.getElementById('courseDetail').style.display = 'none';
+            if (currentRole === 'student') {
+                document.getElementById('studentDashboard').style.display = 'block';
+            } else {
+                document.getElementById('teacherDashboard').style.display = 'block';
+            }
+        }
+
+        function submitAssignment() {
+            const title = document.getElementById('assignmentTitle').value;
+            const desc = document.getElementById('assignmentDesc').value;
+            const due = document.getElementById('assignmentDue').value;
+            
+            if (!title || !desc || !due) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            document.getElementById('assignmentResult').innerHTML = `
+                <div class="success">
+                    <h4>✓ Assignment Created Successfully!</h4>
+                    <p><strong>Title:</strong> ${title}</p>
+                    <p><strong>Due Date:</strong> ${due}</p>
+                </div>
+            `;
+        }
+
+        function submitQuiz() {
+            const title = document.getElementById('quizTitle').value;
+            const questions = document.getElementById('quizQuestions').value;
+            const time = document.getElementById('quizTime').value;
+            
+            if (!title) {
+                alert('Please enter quiz title');
+                return;
+            }
+            
+            document.getElementById('quizCreateResult').innerHTML = `
+                <div class="success">
+                    <h4>✓ Quiz Created Successfully!</h4>
+                    <p><strong>Title:</strong> ${title}</p>
+                    <p><strong>Questions:</strong> ${questions}</p>
+                    <p><strong>Time Limit:</strong> ${time} minutes</p>
+                </div>
+            `;
+        }
+
+        function loadAIMicroservices(role) {
+          const containerId = role === 'student' ? 'aiMicroservices' : 'aiMicroservicesTeacher';
+          const chatMessagesId = role === 'student' ? 'chatMessages' : 'chatMessagesTeacher';
+          const chatInputId = role === 'student' ? 'chatInput' : 'chatInputTeacher';
+    
+          const microservicesHTML = `
+            <div class="tabs">
+              <button class="tab active" onclick="showAITab('chat', '${role}')">💬 AI Chat</button>
+              <button class="tab" onclick="showAITab('documents', '${role}')">📚 Documents</button>
+              <button class="tab" onclick="showAITab('quiz', '${role}')">📝 Quiz</button>
+              <button class="tab" onclick="showAITab('tts', '${role}')">🔊 TTS</button>
+              <button class="tab" onclick="showAITab('stt', '${role}')">🎤 STT</button>
+            </div>
+
+        <!-- Chat Tab -->
+             <div id="chatAI${role}" class="content active">
+              <div class="service-card">
+                 <h3>AI Chat Assistant</h3>
+                    <p style="color: #666; margin-bottom: 20px;">Ask questions and get intelligent responses</p>
+                
+                 <div class="chat-messages" id="${chatMessagesId}">
+                    <div class="message assistant">
+                        <strong>AI Assistant:</strong><br>
+                        Hello! I'm your AI learning assistant. How can I help you today?
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <textarea id="${chatInputId}" placeholder="Type your message here..."></textarea>
+                </div>
+                <button class="btn" onclick="sendMessage('${role}')">Send Message</button>
+            </div>
+        </div>
+
+        <!-- Documents Tab -->
+        <div id="documentsAI${role}" class="content">
+            <div class="service-card">
+                <h3>Document Reader & Note Generator</h3>
+                <p style="color: #666; margin-bottom: 20px;">Upload documents to extract text and generate smart notes</p>
+                
+                <div class="file-upload" onclick="document.getElementById('docUpload${role}').click()">
+                    <input type="file" id="docUpload${role}" accept=".pdf,.docx,.txt" onchange="uploadDocument(this, '${role}')">
+                    <p>📄 Click to upload a document</p>
+                    <p style="color: #666; font-size: 14px;">Supports PDF, DOCX, and TXT files</p>
+                </div>
+                <div id="documentResult${role}"></div>
+                
+                <div id="documentsList${role}" class="grid" style="margin-top: 30px;"></div>
+            </div>
+        </div>
+
+        <!-- Quiz Tab -->
+        <div id="quizAI${role}" class="content">
+            <div class="service-card">
+                <h3>AI Quiz Generator</h3>
+                <p style="color: #666; margin-bottom: 20px;">Upload a document to automatically generate a quiz</p>
+                
+                <div class="file-upload" onclick="document.getElementById('quizUpload${role}').click()">
+                    <input type="file" id="quizUpload${role}" accept=".pdf,.docx,.txt" onchange="generateQuiz(this, '${role}')">
+                    <p>📝 Click to upload a document for quiz generation</p>
+                    <p style="color: #666; font-size: 14px;">AI will create questions based on the content</p>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Number of Questions:</label>
+                    <input type="number" id="numQuestions${role}" value="5" min="1" max="20">
+                </div>
+
+                <div id="quizResult${role}"></div>
+                <div id="quizContainer${role}"></div>
+            </div>
+        </div>
+
+        <!-- TTS Tab -->
+        <div id="ttsAI${role}" class="content">
+            <div class="service-card">
+                <h3>Text-to-Speech Converter</h3>
+                <p style="color: #666; margin-bottom: 20px;">Convert any text into natural-sounding speech</p>
+                
+                <div class="form-group">
+                    <label>Enter Text:</label>
+                    <textarea id="ttsText${role}" placeholder="Enter the text you want to convert to speech..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Language:</label>
+                    <select id="ttsLanguage${role}">
+                        <option value="en">English</option>
+                        <option value="es">Spanish</option>
+                        <option value="fr">French</option>
+                        <option value="de">German</option>
+                        <option value="ar">Arabic</option>
+                    </select>
+                </div>
+
+                <button class="btn" onclick="convertTextToSpeech('${role}')">Convert to Speech</button>
+                <div id="ttsResult${role}"></div>
+            </div>
+        </div>
+
+        <!-- STT Tab -->
+        <div id="sttAI${role}" class="content">
+            <div class="service-card">
+                <h3>Speech-to-Text Transcription</h3>
+                <p style="color: #666; margin-bottom: 20px;">Upload an audio file to get accurate text transcription</p>
+                
+                <div class="file-upload" onclick="document.getElementById('audioUpload${role}').click()">
+                    <input type="file" id="audioUpload${role}" accept="audio/*" onchange="transcribeAudio(this, '${role}')">
+                    <p>🎤 Click to upload an audio file</p>
+                    <p style="color: #666; font-size: 14px;">Supports WAV, MP3, and other audio formats</p>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Audio Language:</label>
+                    <select id="sttLanguage${role}">
+                        <option value="en-US">English (US)</option>
+                        <option value="es-ES">Spanish</option>
+                        <option value="fr-FR">French</option>
+                        <option value="de-DE">German</option>
+                        <option value="ar-SA">Arabic</option>
+                    </select>
+                </div>
+
+                <div id="sttResult${role}"></div>
+            </div>
+        </div>
+    `;
+
+    document.getElementById(containerId).innerHTML = microservicesHTML;
+    
+      setTimeout(() => loadDocuments(role), 500);
+     }
+
+        function showAITab(tab, role) {
+         const container = role === 'student' ? '#aiMicroservices' : '#aiMicroservicesTeacher';
+         document.querySelectorAll(container + ' .tab').forEach(t => t.classList.remove('active'));
+         document.querySelectorAll(container + ' .content').forEach(c => c.classList.remove('active'));
+    
+         event.target.classList.add('active');
+         document.getElementById(tab + 'AI' + role).classList.add('active');
+    }
+
+        // Chat Functions
+        async function sendMessage(role = 'student') {
+            const inputId = role === 'student' ? 'chatInput' : 'chatInputTeacher';
+            const messagesId = role === 'student' ? 'chatMessages' : 'chatMessagesTeacher';
+            const input = document.getElementById(inputId);
+            const message = input.value.trim();
+            
+            if (!message) {
+                alert('Please enter a message');
+                return;
+            }
+
+            const messagesDiv = document.getElementById(messagesId);
+            messagesDiv.innerHTML += `
+                <div class="message user">
+                    <strong>You:</strong><br>${message}
+                </div>
+            `;
+
+            input.value = '';
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/chat/message`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: message,
+                        user_id: role + '_001',
+                        conversation_id: currentConversationId
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                currentConversationId = data.conversation_id;
+
+                messagesDiv.innerHTML += `
+                    <div class="message assistant">
+                        <strong>AI Assistant:</strong><br>${data.message}
+                    </div>
+                `;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } catch (error) {
+                messagesDiv.innerHTML += `
+                    <div class="message assistant">
+                        <strong>Error:</strong><br>Could not connect to AI service. Please check if the API is running.
+                    </div>
+                `;
+            }
+        }
+
+        // Document Functions
+        async function uploadDocument(input, role = 'student') {
+            const file = input.files[0];
+            if (!file) return;
+
+            const resultDiv = document.getElementById('documentResult' + role);
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Uploading and processing document...</p></div>';
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('user_id', role + '_001');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/documents/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <h4>✓ Document Uploaded Successfully!</h4>
+                        <p><strong>Document ID:</strong> ${data.document_id}</p>
+                        <p><strong>Status:</strong> ${data.status}</p>
+                        <p>Notes are being generated. Check back in a moment.</p>
+                        <button class="btn" onclick="viewNotes('${data.document_id}', '${role}')" style="margin-top: 15px;">📝 Get Notes</button>
+                    </div>
+                `;
+
+                setTimeout(() => loadDocuments(role), 2000);
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">Error: ${error.message}. Please check if the API server is running.</div>`;
+            }
+        }
+
+        async function loadDocuments(role = 'student') {
+            try {
+                const response = await fetch(`${API_BASE}/api/documents?user_id=${role}_001`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                const listDiv = document.getElementById('documentsList'+ role);
+                if (!listDiv) return;
+                if (!data.documents || data.documents.length === 0) {
+                    listDiv.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
+                            <p>No documents uploaded yet. Upload a document above to get started!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                listDiv.innerHTML = `
+                    <h3 style="grid-column: 1/-1;">Your Documents 
+                        <button class="btn" onclick="loadDocuments('${role}')" style="float: right; padding: 8px 16px; font-size: 14px;">🔄 Refresh</button>
+                    </h3>
+                `;
+                
+                data.documents.forEach(doc => {
+                    const statusColor = doc.status === 'processed' ? '#28a745' : 
+                                       doc.status === 'processing' ? '#ffc107' : '#dc3545';
+                    listDiv.innerHTML += `
+                        <div class="card">
+                            <h4>📄 ${doc.filename}</h4>
+                            <p><strong>Status:</strong> <span style="color: ${statusColor}">${doc.status}</span></p>
+                            <p><strong>Uploaded:</strong> ${new Date(doc.uploaded_at).toLocaleString()}</p>
+                            <button class="btn" onclick="viewNotes('${doc.document_id}', '${role}')" style="margin-top: 10px;">
+                                ${doc.status === 'processed' ? '📝 Get Notes' : '⏳ Processing...'}
+                            </button>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error loading documents:', error);
+            }
+        }
+
+        async function viewNotes(documentId, role = 'student') {
+            try {
+                const resultDiv = document.getElementById('documentResult'+ role);
+                resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Fetching notes...</p></div>';
+                
+                const response = await fetch(`${API_BASE}/api/documents/${documentId}/notes`);
+                
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error('Notes not ready yet. The document is still being processed. Please wait a moment and try again.');
+                    }
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="result-box">
+                        <h4>📝 Generated Notes</h4>
+                        <pre style="white-space: pre-wrap; font-family: inherit;">${data.notes}</pre>
+                    </div>
+                `;
+                
+                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } catch (error) {
+                const resultDiv = document.getElementById('documentResult');
+                resultDiv.innerHTML = `
+                    <div class="info">
+                        <h4>⏳ Notes Not Ready</h4>
+                        <p>${error.message}</p>
+                        <button class="btn" onclick="viewNotes('${documentId}', '${role}')" style="margin-top: 10px;">Try Again</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Quiz Functions
+        async function generateQuiz(input, role = 'student') {
+            const file = input.files[0];
+            if (!file) return;
+
+            const numQuestions = document.getElementById('numQuestions'+ role).value;
+            const resultDiv = document.getElementById('quizResult'+ role);
+            
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Generating quiz questions...</p></div>';
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('num_questions', numQuestions);
+            formData.append('question_types', 'multiple_choice,true_false');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/quiz/upload-and-generate`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                currentQuizId = data.quiz_id;
+                
+                displayQuiz(data, role);
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">Error: ${error.message}. Please check if the API server is running.</div>`;
+            }
+        }
+
+        function displayQuiz(quizData, role = 'student') {
+            const container = document.getElementById('quizContainer'+ role);
+            const resultDiv = document.getElementById('quizResult'+ role);
+            
+            resultDiv.innerHTML = `
+                <div class="info">
+                    <h4>Quiz Ready!</h4>
+                    <p><strong>Document:</strong> ${quizData.document_name}</p>
+                    <p><strong>Questions:</strong> ${quizData.questions.length}</p>
+                </div>
+            `;
+
+            let quizHTML = '<form id="quizForm">';
+            
+            quizData.questions.forEach((q, index) => {
+                quizHTML += `
+                    <div class="quiz-question">
+                        <h4>Question ${index + 1}</h4>
+                        <p><strong>${q.question_text}</strong></p>
+                        <div style="margin-top: 15px;">
+                `;
+                
+                if (q.options) {
+                    q.options.forEach((option, optIndex) => {
+                        quizHTML += `
+                            <label class="quiz-option">
+                                <input type="radio" name="q${index}" value="${option}" required>
+                                ${option}
+                            </label>
+                        `;
+                    });
+                }
+                
+                quizHTML += `
+                        </div>
+                    </div>
+                `;
+            });
+            
+            quizHTML += '<button type="button" class="btn" onclick="submitQuizAnswer(\'' + role + '\')">Submit Quiz</button></form>';
+            container.innerHTML = quizHTML;
+        }
+
+        async function submitQuizAnswer(role = 'student') {
+            const answers = {};
+            
+            const questions = document.querySelectorAll('#quizContainer' + role + '.quiz-question');
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                if (selected) {
+                    const questionId = currentQuizId + '_' + index;
+                    answers[questionId] = selected.value;
+                }
+            });
+
+            try {
+                const response = await fetch(`${API_BASE}/api/quiz/${currentQuizId}/submit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ answers: answers })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                
+                document.getElementById('quizResult' + role).innerHTML = `
+                    <div class="success">
+                        <h4>🎉 Quiz Results</h4>
+                        <p><strong>Score:</strong> ${result.score.toFixed(2)}%</p>
+                        <p><strong>Correct Answers:</strong> ${result.correct_answers} / ${result.total_questions}</p>
+                    </div>
+                `;
+                
+                document.getElementById('quizContainer' + role).innerHTML = '';
+            } catch (error) {
+                alert('Error submitting quiz: ' + error.message);
+            }
+        }
+
+        // TTS Functions
+        async function convertTextToSpeech(role = 'student') {
+            const text = document.getElementById('ttsText' + role).value.trim();
+            const language = document.getElementById('ttsLanguage' + role).value;
+            
+            if (!text) {
+                alert('Please enter some text');
+                return;
+            }
+
+            const resultDiv = document.getElementById('ttsResult' + role);
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Converting text to speech...</p></div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/tts/synthesize`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: text,
+                        language: language,
+                        voice: 'default',
+                        format: 'mp3'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                const checkAudio = setInterval(async () => {
+                    const statusResponse = await fetch(`${API_BASE}/api/tts/audio/${data.audio_id}`);
+                    const status = await statusResponse.json();
+                    
+                    if (status.status === 'completed') {
+                        clearInterval(checkAudio);
+                        resultDiv.innerHTML = `
+                            <div class="success">
+                                <h4>✓ Audio Generated Successfully!</h4>
+                                <audio controls src="${API_BASE}/api/tts/audio/${data.audio_id}/download"></audio>
+                            </div>
+                        `;
+                    }
+                }, 2000);
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">Error: ${error.message}. Please check if the API server is running.</div>`;
+            }
+        }
+
+        // STT Functions
+        async function transcribeAudio(input, role = 'student') {
+            const file = input.files[0];
+            if (!file) return;
+
+            const language = document.getElementById('sttLanguage' + role).value;
+            const resultDiv = document.getElementById('sttResult' + role);
+            
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Transcribing audio...</p></div>';
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('language', language);
+
+            try {
+                const response = await fetch(`${API_BASE}/api/stt/transcribe`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                const checkTranscription = setInterval(async () => {
+                    const statusResponse = await fetch(`${API_BASE}/api/stt/transcription/${data.transcription_id}`);
+                    const status = await statusResponse.json();
+                    
+                    if (status.status === 'completed') {
+                        clearInterval(checkTranscription);
+                        resultDiv.innerHTML = `
+                            <div class="result-box">
+                                <h4>📝 Transcription Result</h4>
+                                <p>${status.text}</p>
+                            </div>
+                        `;
+                    } else if (status.status === 'failed') {
+                        clearInterval(checkTranscription);
+                        resultDiv.innerHTML = `<div class="error">Transcription failed: ${status.error}</div>`;
+                    }
+                }, 2000);
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">Error: ${error.message}. Please check if the API server is running.</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
