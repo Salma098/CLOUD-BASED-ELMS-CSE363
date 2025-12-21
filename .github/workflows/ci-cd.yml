@@ -97,6 +97,15 @@ jobs:
           tags: |
             ${{ env.ECR_REGISTRY }}/${{ matrix.service }}:${{ steps.meta.outputs.sha_short }}
             ${{ env.ECR_REGISTRY }}/${{ matrix.service }}:${{ steps.meta.outputs.branch }}-latest
+            
+      - name: Ensure ECR repository exists  
+        run: |
+          aws ecr describe-repositories \
+            --repository-names ${{ matrix.service }} \
+            --region $AWS_REGION || \
+          aws ecr create-repository \
+            --repository-name ${{ matrix.service }} \
+            --region $AWS_REGION
 
       - name: Scan image with Trivy
         uses: aquasecurity/trivy-action@master
