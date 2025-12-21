@@ -1,7 +1,8 @@
-fastapi==0.104.1
+fastapi==0.110.0
 uvicorn==0.24.0
-kafka-python==2.0.2
+
 boto3==1.29.7
-gTTS==2.4.0
 pydantic==2.5.0
 python-dotenv==1.0.0
+python-multipart==0.0.18
+urllib3==2.6.0
