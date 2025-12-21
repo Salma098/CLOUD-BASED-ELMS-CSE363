@@ -105,6 +105,11 @@ jobs:
           severity: CRITICAL
           exit-code: 1
 
+      - name: Create ECR repository if not exists
+        run: |
+          aws ecr describe-repositories --repository-names ${{ matrix.service }} \
+          || aws ecr create-repository --repository-name ${{ matrix.service }}
+
       - name: Push image to ECR
         run: |
           docker push ${{ env.ECR_REGISTRY }}/${{ matrix.service }}:${{ steps.meta.outputs.sha_short }}
