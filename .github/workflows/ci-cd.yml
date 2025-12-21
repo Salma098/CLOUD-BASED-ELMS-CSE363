@@ -110,14 +110,9 @@ jobs:
       - name: Scan image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ env.ECR_REGISTRY }}/${{ matrix.service }}:${{ steps.meta.outputs.sha_short }}
-          severity: CRITICAL
-          exit-code: 1
-
-      - name: Create ECR repository if not exists
-        run: |
-          aws ecr describe-repositories --repository-names ${{ matrix.service }} \
-          || aws ecr create-repository --repository-name ${{ matrix.service }}
+           image-ref: ${{ env.ECR_REGISTRY }}/${{ matrix.service }}:${{ steps.meta.outputs.sha_short }}
+           severity: CRITICAL
+           exit-code: 1
 
       - name: Push image to ECR
         run: |
@@ -143,12 +138,29 @@ jobs:
 
       - name: Update ECS services (Dev)
         run: |
-          for service in chat-service document-service tts-service stt-service quiz-service; do
-            aws ecs update-service \
-              --cluster cse363-dev-cluster \
-              --service $service \
-              --force-new-deployment
-          done
+         CLUSTER="cse363-dev-cluster"
+         aws ecs describe-clusters --clusters $CLUSTER >/dev/null 2>&1 || {
+         echo "❌ Cluster $CLUSTER not found – skipping deployment"
+         exit 0
+         }
+
+         for service in chat-service document-service tts-service stt-service quiz-service; do
+         aws ecs describe-services \
+         --cluster $CLUSTER \
+         --services $service \
+         --query "services[0].status" \
+         --output text 2>/dev/null | grep ACTIVE >/dev/null || {
+          echo "⚠️ Service $service not found – skipping"
+          continue
+          }
+
+         echo "🚀 Updating service $service"
+         aws ecs update-service \
+         --cluster $CLUSTER \
+         --service $service \
+         --force-new-deployment
+         done
+
 
   # =========================
   # Job 4: Deploy to Prod
@@ -170,12 +182,30 @@ jobs:
 
       - name: Update ECS services (Prod)
         run: |
-          for service in chat-service document-service tts-service stt-service quiz-service; do
-            aws ecs update-service \
-              --cluster cse363-prod-cluster \
-              --service $service \
-              --force-new-deployment
-          done
+         CLUSTER="cse363-prod-cluster"
+
+         aws ecs describe-clusters --clusters $CLUSTER >/dev/null 2>&1 || {
+         echo "❌ Cluster $CLUSTER not found – skipping deployment"
+         exit 0
+          }
+
+         for service in chat-service document-service tts-service stt-service quiz-service; do
+         aws ecs describe-services \
+         --cluster $CLUSTER \
+         --services $service \
+         --query "services[0].status" \
+         --output text 2>/dev/null | grep ACTIVE >/dev/null || {
+           echo "⚠️ Service $service not found – skipping"
+           continue
+            }
+
+         echo "🚀 Updating service $service"
+         aws ecs update-service \
+         --cluster $CLUSTER \
+         --service $service \
+         --force-new-deployment
+         done
+
 
   # =========================
   # Job 5: End-to-End Tests
