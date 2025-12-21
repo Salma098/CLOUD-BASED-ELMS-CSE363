@@ -9,4 +9,3 @@ python-dotenv==1.0.0
 python-multipart=0.0.18
 starlette=0.40.0
 urllib3=2.6.0
-
