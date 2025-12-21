@@ -1,11 +1,10 @@
 fastapi==0.110.0
 uvicorn==0.24.0
-kafka-python==2.0.2
 boto3==1.29.7
 SpeechRecognition==3.10.0
 pydub==0.25.1
 pydantic==2.5.0
 python-dotenv==1.0.0
-python-multipart=0.0.18
-starlette=0.40.0
-urllib3=2.6.0
+python-multipart==0.0.18
+starlette==0.40.0
+urllib3==2.6.0
